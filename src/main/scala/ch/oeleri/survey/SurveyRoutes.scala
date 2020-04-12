@@ -34,9 +34,8 @@ object SurveyRoutes {
 
 
     HttpRoutes.of[IO] {
-      case request@GET -> Root / "index.html" =>
-
-        StaticFile.fromFile(new File(this.getClass.getResource("/index.html").getFile), blocker, Some(request))
+      case request@GET -> Root =>
+        StaticFile.fromFile(new File(s"${System.getProperty("user.home")}/index.html"), blocker, Some(request))
           .getOrElseF(NotFound()) // In case the file doesn't exist
 
       case req@POST -> Root / "submit" =>
