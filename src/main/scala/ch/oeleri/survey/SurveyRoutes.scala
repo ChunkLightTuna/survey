@@ -12,7 +12,7 @@ trait Question extends Product {
 }
 
 case class Text(question: String, response: String) extends Question {
-  override def toString: String = s"$question\n\t$response"
+  override def toString: String = s"$question:\n$response"
 }
 
 case class Audio(question: String, response: Array[Byte]) extends Question
@@ -55,17 +55,18 @@ object SurveyRoutes {
           val audio = parts.withFilter(_.isInstanceOf[Audio]).map(_.asInstanceOf[Audio])
 
 
-          new File(path)
-            .mkdir()
+          new File(path).mkdir()
 
           new FileOutputStream(s"$path/questions.txt")
-            .write(text.mkString("\n").getBytes)
+            .write(text.mkString("", "\n\n", "\n").getBytes)
 
           audio.foreach { mp3 =>
             new FileOutputStream(s"$path/${mp3.question}.mp3")
               .write(mp3.response)
           }
-          Ok("")
+
+
+          Ok("success")
         }
 
     }

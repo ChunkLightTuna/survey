@@ -57,15 +57,7 @@
     <title></title>
 </head>
 <body>
-<div id="audio">
-
-    <p>
-        <button id=startRecord onclick="startRecording()">Start</button>
-        <button id=stopRecord onclick="stopRecording()">Stop</button>
-    </p>
-    <p>
-        <audio id=recordedAudio></audio>
-    </p>
+<div>
     <form id="form">
 
         <div>
@@ -80,8 +72,19 @@
             <label for="q3">Konk?</label>
             <input name="q3" id="q3" value="konk">
         </div>
+        <div>
+
+            <label>Fonk?</label>
+            <button type="button" id=startRecord onclick="startRecording()">Start</button>
+            <button type="button" id=stopRecord onclick="stopRecording()">Stop</button>
+
+
+            <audio id=recordedAudio></audio>
+
+        </div>
+        <button type="button" onclick="submit()">Submit</button>
     </form>
-    <button onclick="submit()">Submit</button>
+
 </div>
 </body>
 </html>
