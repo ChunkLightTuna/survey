@@ -24,8 +24,9 @@ object SurveyServer {
       finalHttpApp = Logger.httpApp(true, true)(httpApp)
 
       exitCode <- BlazeServerBuilder[IO]
-        .bindHttp(8080, "0.0.0.0")
+        .bindHttp(8443)
         .withHttpApp(finalHttpApp)
+        .withSslContext(Ssl.fromPath("/etc/letsencrypt/live/survey.oeleri.ch/", "wonkdonk123!"))
         .serve
     } yield exitCode
   }.drain
