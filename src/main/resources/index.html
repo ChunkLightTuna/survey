@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+
+    <script>
+
+        let blob;
+
+        navigator.mediaDevices.getUserMedia({
+            audio: true
+        })
+            .then(stream => {
+                rec = new MediaRecorder(stream);
+                rec.ondataavailable = e => {
+                    audio.push(e.data);
+                    if (rec.state === "inactive") {
+                        blob = new Blob(audio, {
+                            type: 'audio/x-mpeg-3'
+                        });
+                        recordedAudio.src = URL.createObjectURL(blob);
+                        recordedAudio.controls = true;
+                    }
+                }
+            })
+            .catch(e => console.log(e));
+
+        function startRecording() {
+            startRecord.disabled = true;
+            stopRecord.disabled = false;
+            audio = [];
+            recordedAudio.controls = false;
+            rec.start();
+        }
+
+        function stopRecording() {
+            startRecord.disabled = false;
+            stopRecord.disabled = true;
+            rec.stop();
+        }
+
+        function submit() {
+            if (confirm('Ready to submit?')) {
+                const formElement = document.querySelector("form");
+                const formData = new FormData(formElement);
+                formData.append("q4", blob, "q4.mp3");
+
+                const request = new XMLHttpRequest();
+                request.open("POST", "/submit");
+                request.send(formData);
+            } else {
+                return false;
+            }
+        }
+
+    </script>
+    <title></title>
+</head>
+<body>
+<div id="audio">
+
+    <p>
+        <button id=startRecord onclick="startRecording()">Start</button>
+        <button id=stopRecord onclick="stopRecording()">Stop</button>
+    </p>
+    <p>
+        <audio id=recordedAudio></audio>
+    </p>
+    <form id="form">
+
+        <div>
+            <label for="q1">Wonk?</label>
+            <input name="q1" id="q1" value="wonk">
+        </div>
+        <div>
+            <label for="q2">Donk?</label>
+            <input name="q2" id="q2" value="donk">
+        </div>
+        <div>
+            <label for="q3">Konk?</label>
+            <input name="q3" id="q3" value="konk">
+        </div>
+    </form>
+    <button onclick="submit()">Submit</button>
+</div>
+</body>
+</html>
