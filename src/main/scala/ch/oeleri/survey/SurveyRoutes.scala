@@ -34,14 +34,19 @@ object SurveyRoutes {
 
 
     HttpRoutes.of[IO] {
+      case request@GET -> Root / x =>
+        StaticFile.fromFile(
+          new File(s"${System.getProperty("user.home")}/www/${x.replace("../", "")}")
+          , blocker, Some(request)).getOrElseF(NotFound()) // In case the file doesn't exist
+
       case request@GET -> Root =>
-        StaticFile.fromFile(new File(s"${System.getProperty("user.home")}/index.html"), blocker, Some(request))
+        StaticFile.fromFile(new File(s"${System.getProperty("user.home")}/www/index.html"), blocker, Some(request))
           .getOrElseF(NotFound()) // In case the file doesn't exist
 
       case req@POST -> Root / "submit" =>
         val ip = req.from.map(_.getAddress.mkString).getOrElse("no_ip")
         val millis = System.currentTimeMillis()
-        val path = s"${System.getProperty("user.home")}/${millis}_$ip"
+        val path = s"${System.getProperty("user.home")}/responses/${millis}_$ip"
 
         req.decodeWith(org.http4s.EntityDecoder.multipart[IO], strict = true) { response =>
           val parts: Seq[Question] = response.parts.withFilter(_.name.isDefined).map {
