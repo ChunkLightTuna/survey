@@ -34,13 +34,13 @@ object SurveyRoutes {
 
 
     HttpRoutes.of[IO] {
-      case request@GET -> Root / x =>
+      case request@GET -> "static" /: x =>
         StaticFile.fromFile(
-          new File(s"${System.getProperty("user.home")}/www/${x.replace("../", "")}")
+          new File(s"${System.getProperty("user.home")}/static/${x.toList.mkString("/")}")
           , blocker, Some(request)).getOrElseF(NotFound()) // In case the file doesn't exist
 
       case request@GET -> Root =>
-        StaticFile.fromFile(new File(s"${System.getProperty("user.home")}/www/index.html"), blocker, Some(request))
+        StaticFile.fromFile(new File(s"${System.getProperty("user.home")}/static/index.html"), blocker, Some(request))
           .getOrElseF(NotFound()) // In case the file doesn't exist
 
       case req@POST -> Root / "submit" =>
